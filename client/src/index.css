@@ -1,0 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.error {
+  @apply text-red-500 text-xs mb-2 text-left w-full;
+}
