@@ -2,6 +2,9 @@ const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const secret = process.env.SECRET_KEY;
 
 const register = async (req, res) => {
   const { email, password, name } = req.body;
@@ -44,16 +47,39 @@ const register = async (req, res) => {
 //login
 const login = async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
   if (user) {
     const passOk = await bcrypt.compare(password, user.password);
     if (passOk) {
       console.log("user is logged in");
-      res.json("user is logged in");
+      const token = jwt.sign({ email, name: user.name }, secret, {
+        expiresIn: "1h",
+      });
+
+      // Save token in database
+      await prisma.token.create({
+        data: {
+          token: token,
+          userId: user.id,
+        },
+      });
+
+      // Set token cookie and send response
+      return res
+        .cookie("token", token, {
+          httpOnly: true,
+        })
+        .json({ token: token, message: "User logged in" });
     } else {
-      res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
   }
+  return res.status(404).json({ error: "User not found" });
 };
 
 module.exports = { login, register };
