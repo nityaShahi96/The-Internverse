@@ -42,7 +42,7 @@ export default function Login({ isOpen, onClose }) {
           </button>
         </div>
 
-        <div className="flex w-full text-xl font-semibold">
+        <div className="flex w-full text-xl font-semibold cursor-pointer">
           <div
             className={`
             text-center w-[50%] 
