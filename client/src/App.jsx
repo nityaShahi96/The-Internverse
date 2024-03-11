@@ -1,10 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import UserLayout from "./layout/UserLayout";
-import Home from "./pages/userPages/Home";
-
-import Login from "./pages/userPages/Login";
-import EmployerRegister from "./pages/userPages/EmployerRegister";
-import CandidateRegister from "./pages/userPages/CandidateRegister";
+import {
+  Home,
+  Login,
+  CandidateRegister,
+  EmployerRegister,
+} from "./pages/userPages/index";
+import EmployerLayout from "./layout/Employerlayout";
+import CandidateLayout from "./layout/CandidateLayout";
+import EmployerHome from "./pages/employerPages/Home";
+import CandidateHome from "./pages/candidatePages/Home";
 
 const App = () => {
   return (
@@ -14,6 +19,12 @@ const App = () => {
         <Route path="login" element={<Login />} />
         <Route path="candidateRegister" element={<CandidateRegister />} />
         <Route path="employerRegister" element={<EmployerRegister />} />
+      </Route>
+      <Route path="/employer/" element={<EmployerLayout />}>
+        <Route index element={<EmployerHome />} />
+      </Route>
+      <Route path="/candidate/*" element={<CandidateLayout />}>
+        <Route index element={<CandidateHome />} />
       </Route>
     </Routes>
   );

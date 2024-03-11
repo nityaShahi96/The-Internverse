@@ -16,6 +16,10 @@ const EmployerRegister = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const handleBlur = (e) => {
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
   function handleSubmit(e) {
     e.preventDefault();
     setErrors(Validation(values));
@@ -42,6 +46,7 @@ const EmployerRegister = () => {
               value={values.email}
               className="mb-3 px-3 py-2 border rounded w-full outline-none "
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.email && <p className="error">{errors.email}</p>}
             <input
@@ -51,6 +56,7 @@ const EmployerRegister = () => {
               value={values.password}
               className="mb-3 px-3 py-2 border rounded w-full outline-none"
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.password && <p className="error">{errors.password}</p>}
 
@@ -61,6 +67,7 @@ const EmployerRegister = () => {
               value={values.fullName}
               className="mb-3 px-3 py-2 border rounded w-full outline-none"
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.fullName && <p className="error">{errors.fullName}</p>}
 
@@ -71,6 +78,7 @@ const EmployerRegister = () => {
               value={values.phoneNumber}
               className="mb-3 px-3 py-2 border rounded w-full outline-none"
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.phoneNumber && (
               <p className="error">{errors.phoneNumber}</p>

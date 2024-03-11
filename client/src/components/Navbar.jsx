@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Login from "../pages/userPages/Login";
 
 export default function Navbar() {
@@ -7,11 +7,10 @@ export default function Navbar() {
 
   return (
     <div className="w-full flex justify-between items-center border-b px-36 shadow-sm py-6">
-      <div className="flex items-center gap-5">
-        <div className="flex items-center justify-center gap-2">
-          <span className="w-10 h-10 bg-primary rounded-full"></span>
-          <span className="text-primary italic font-bold text-2xl">
-            Internverse
+      <div className="flex items-center gap-14">
+        <div className="flex items-center justify-center">
+          <span className="text-primary font-bold text-2xl cursor-pointer">
+            <Link to="/">Internverse</Link>
           </span>
         </div>
 
