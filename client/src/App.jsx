@@ -10,6 +10,7 @@ import EmployerLayout from "./layout/Employerlayout";
 import CandidateLayout from "./layout/CandidateLayout";
 import EmployerHome from "./pages/employerPages/Home";
 import CandidateHome from "./pages/candidatePages/Home";
+import CandidateDetails from "./pages/candidatePages/CandidateDetail";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <Route path="/candidate/*" element={<CandidateLayout />}>
         <Route index element={<CandidateHome />} />
       </Route>
+      <Route path="/candidateDetails" element={<CandidateDetails />} />
     </Routes>
   );
 };
