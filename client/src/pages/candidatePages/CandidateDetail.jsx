@@ -103,7 +103,7 @@ export default function CandidateDetail() {
         </div>
 
         <div className="flex justify-end">
-          <button className="bg-orange-600 text-white py-2 rounded w-[10%]">
+          <button className="bg-orange-600 hover:bg-orange-700 hover:ease-in-out transition-all delay-200 text-white py-2 rounded w-[10%]">
             Save
           </button>
         </div>
