@@ -28,5 +28,5 @@
 }
 
 .label {
-  @apply text-gray-600 mb-1;
+  @apply mb-1;
 }
