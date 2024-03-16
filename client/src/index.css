@@ -30,3 +30,7 @@
 .label {
   @apply mb-1;
 }
+
+.formCol {
+  @apply grid grid-cols-2 gap-4;
+}

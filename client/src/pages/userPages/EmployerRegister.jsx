@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import meeting from "../../assets/images/meeting.jpeg";
 import Validation from "./Validation";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const EmployerRegister = () => {
   const [values, setValues] = useState({
     email: "",
     password: "",
-    fullName: "",
+    name: "",
     phoneNumber: "",
+    userType: "employer",
   });
 
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    console.log("values", values); // Add this line
   };
 
   const handleBlur = (e) => {
@@ -22,7 +26,26 @@ const EmployerRegister = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setErrors(Validation(values));
+    console.log("handleSubmit called"); // Add this line
+    const validationErrors = Validation(values);
+    console.log("validationErrors", validationErrors); // Add this line
+    if (Object.keys(validationErrors).length === 0) {
+      axios
+        .post("http://localhost:4000/user/register", values)
+        .then((response) => {
+          if (response.data.error) {
+            setErrors({ api: response.data.error });
+          } else {
+            // Handle successful registration here, e.g. redirect to login page
+          }
+        })
+        .catch((error) => {
+          console.log("API request failed", error); // Add this line
+          setErrors({ api: "Could not connect to API" });
+        });
+    } else {
+      setErrors(validationErrors);
+    }
   }
 
   return (
@@ -63,13 +86,13 @@ const EmployerRegister = () => {
             <input
               type="text"
               placeholder="Full Name"
-              name="fullName"
-              value={values.fullName}
+              name="name"
+              value={values.name}
               className="mb-3 px-3 py-2 border rounded w-full outline-none"
               onChange={handleChange}
               onBlur={handleBlur}
             />
-            {errors.fullName && <p className="error">{errors.fullName}</p>}
+            {errors.name && <p className="error">{errors.name}</p>}
 
             <input
               type="text"

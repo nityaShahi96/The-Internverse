@@ -4,82 +4,111 @@ const saltRounds = 10;
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+require("dotenv").config();
 const secret = process.env.SECRET_KEY;
 
 const register = async (req, res) => {
-  const { email, password, name } = req.body;
-  async function createUser() {
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+  const { email, password, userType, firstName, lastName, name } = req.body;
 
-    if (existingUser) {
-      throw new Error("User with this email already exists");
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    const newUser = await prisma.user.create({
-      data: {
-        email: email,
-        name: name,
-        password: hashedPassword, // store the hashed password
-      },
-    });
-
-    console.log(`Created new user: ${newUser.email}`);
-    res
-      .status(201)
-      .send({ message: "User registered successfully", user: newUser });
-  }
-  createUser(email, password, name)
-    .catch((e) => {
-      res.status(500).send({ error: e.message });
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
-};
-
-//login
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await prisma.user.findUnique({
+  const existingUser = await prisma.user.findUnique({
     where: {
       email: email,
     },
   });
 
-  if (user) {
-    const passOk = await bcrypt.compare(password, user.password);
-    if (passOk) {
-      console.log("user is logged in");
-      const token = jwt.sign({ email, name: user.name }, secret, {
-        expiresIn: "1h",
-      });
-
-      // Save token in database
-      await prisma.token.create({
-        data: {
-          token: token,
-          userId: user.id,
-        },
-      });
-
-      // Set token cookie and send response
-      return res
-        .cookie("token", token, {
-          httpOnly: true,
-        })
-        .json({ token: token, message: "User logged in" });
-    } else {
-      return res.status(404).json({ error: "User not found" });
-    }
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: "User with this email already exists" });
   }
-  return res.status(404).json({ error: "User not found" });
+
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  let user;
+  if (userType === "employer") {
+    user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        employer: {
+          create: {
+            name: name,
+          },
+        },
+      },
+    });
+  } else if (userType === "student") {
+    user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        student: {
+          create: {
+            firstName: firstName,
+            lastName: lastName,
+          },
+        },
+      },
+    });
+  } else {
+    return res.status(400).json({ error: "Invalid user type" });
+  }
+
+  res.json({ user });
+};
+
+//login
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+    include: {
+      employer: true,
+      student: true,
+    },
+  });
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ error: "User with this email does not exist" });
+  }
+
+  const valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) {
+    return res.status(400).json({ error: "Invalid password" });
+  }
+
+  let userType;
+  if (user.employer) {
+    userType = "employer";
+  } else if (user.student) {
+    userType = "student";
+  }
+
+  console.log(userType);
+
+  const token = jwt.sign({ userId: user.id, userType: userType }, secret, {
+    expiresIn: "6h",
+  });
+
+  await prisma.token.create({
+    data: {
+      token: token,
+      userId: user.id,
+    },
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.json({ token, user });
 };
 
 module.exports = { login, register };

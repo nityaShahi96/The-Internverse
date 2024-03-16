@@ -1,5 +1,41 @@
 import React, { useState } from "react";
-import Validation from "./Validation";
+import toast from "react-hot-toast";
+import axios from "axios";
+
+const Validation = (values) => {
+  const validatePhoneNumber = (phoneNumber) => {
+    const numberRegex = /^(\d{3})[-. ]?(\d{3})[-. ]?(\d{4})$/;
+    return numberRegex.test(phoneNumber);
+  };
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  let errors = {};
+  if (!values.email) {
+    errors.email = "Email is required";
+  } else if (!emailRegex.test(values.email)) {
+    errors.email = "Email is invalid";
+  }
+  if (!values.password) {
+    errors.password = "Password is required";
+  } else if (values.password.length < 6) {
+    errors.password = "Password must be more than 6 characters";
+  }
+
+  if (!values.firstName) {
+    errors.firstName = "First Name is required";
+  } else if (values.firstName.length < 3) {
+    errors.firstName = "First Name must be more than 3 characters";
+  }
+
+  if (!values.lastName) {
+    errors.lastName = "Last Name is required";
+  } else if (values.lastName.length < 3) {
+    errors.lastName = "Last Name must be more than 3 characters";
+  }
+
+  return errors;
+};
 
 const CandidateRegister = () => {
   const [values, setValues] = useState({
@@ -7,6 +43,7 @@ const CandidateRegister = () => {
     password: "",
     firstName: "",
     lastName: "",
+    userType: "student",
   });
 
   const [errors, setErrors] = useState({});
@@ -21,7 +58,26 @@ const CandidateRegister = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setErrors(Validation(values));
+    const validationErrors = Validation(values);
+    console.log("validationErrors", validationErrors); // Add this line
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("Sending request to API");
+      // if there are no validation errors
+      axios
+        .post("http://localhost:4000/user/register", values)
+        .then((response) => {
+          // handle success
+          console.log(response);
+          toast.success("Registration successful");
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+          toast.error("Registration failed");
+        });
+    }
   }
 
   return (
