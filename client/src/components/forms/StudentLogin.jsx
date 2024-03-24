@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import Validation from "../../pages/userPages/Validation";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentLogin() {
   const [values, setValues] = useState({
     email: "",
     password: "",
+    userType: "student",
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -28,11 +31,24 @@ export default function StudentLogin() {
       return;
     }
 
-    toast.success("Successfully toasted!");
+    toast.success("Successfully Logged In!");
+    navigate("/candidateDetails");
   }
 
+  const login = async (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+    if (Object.keys(errors).length > 0) return;
+    try {
+      await axios.post("http://localhost:4000/user/login", values);
+      toast.success("Logged in successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 py-4">
+    <form onSubmit={login} className="flex flex-col gap-2 py-4">
       <div className="inputContainer">
         <label htmlFor="email">Email:</label>
         <input
@@ -71,3 +87,20 @@ export default function StudentLogin() {
     </form>
   );
 }
+
+const Validation = (values) => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  let errors = {};
+  if (!values.email) {
+    errors.email = "Email is required";
+  } else if (!emailRegex.test(values.email)) {
+    errors.email = "Email is invalid";
+  }
+  if (!values.password) {
+    errors.password = "Password is required";
+  } else if (values.password.length < 6) {
+    errors.password = "Password must be more than 6 characters";
+  }
+  return errors;
+};

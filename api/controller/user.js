@@ -90,8 +90,6 @@ const login = async (req, res) => {
     userType = "student";
   }
 
-  console.log(userType);
-
   const token = jwt.sign({ userId: user.id, userType: userType }, secret, {
     expiresIn: "6h",
   });
@@ -108,7 +106,7 @@ const login = async (req, res) => {
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
-  res.json({ token, user });
+  res.json({ token });
 };
 
 module.exports = { login, register };

@@ -17,19 +17,19 @@ const Validation = (values) => {
   } else if (values.password.length < 6) {
     errors.password = "Password must be more than 6 characters";
   }
-  if (!values.name) {
-    errors.fullName = "Full Name is required";
-  } else if (
-    typeof values.fullName === "string" &&
-    values.fullName.length < 3
-  ) {
-    errors.fullName = "Full Name must be more than 3 characters";
-  }
-  if (!values.phoneNumber) {
-    errors.phoneNumber = "Phone Number is required";
-  } else if (!validatePhoneNumber(values.phoneNumber)) {
-    errors.phoneNumber = "Phone Number is invalid";
-  }
+  // if (!values.name) {
+  //   errors.fullName = "Full Name is required";
+  // } else if (
+  //   typeof values.fullName === "string" &&
+  //   values.fullName.length < 3
+  // ) {
+  //   errors.fullName = "Full Name must be more than 3 characters";
+  // }
+  // if (!values.phoneNumber) {
+  //   errors.phoneNumber = "Phone Number is required";
+  // } else if (!validatePhoneNumber(values.phoneNumber)) {
+  //   errors.phoneNumber = "Phone Number is invalid";
+  // }
 
   // if (!values.firstName) {
   //   errors.firstName = "First Name is required";
