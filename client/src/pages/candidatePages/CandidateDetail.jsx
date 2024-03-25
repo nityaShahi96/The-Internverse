@@ -1,9 +1,15 @@
-import PersonalDetails from "../../components/candidate/detailsFormComponent/PersonalDetails";
 import AddressDetails from "../../components/candidate/detailsFormComponent/AddressDetails";
+import EducationDetails from "../../components/candidate/detailsFormComponent/EducationDetails";
 import { useState } from "react";
+import SkillDetails from "../../components/candidate/detailsFormComponent/SkillDetails";
+import TrainingDetails from "../../components/candidate/detailsFormComponent/TrainingDetails";
+import WorkExperienceDetails from "../../components/candidate/detailsFormComponent/WorkExperienceDetails";
+import { PersonalDetails } from "../../components/candidate/detailsFormComponent/index";
+import { useNavigate } from "react-router-dom";
 
 export default function CandidateDetail() {
   const [currrentStep, setCurrentStep] = useState(0);
+  const navigate = useNavigate();
 
   const handleNextClick = () => {
     setCurrentStep(currrentStep + 1);
@@ -17,6 +23,17 @@ export default function CandidateDetail() {
         return <PersonalDetails onNextClick={handleNextClick} />;
       case 1:
         return <AddressDetails onNextClick={handleNextClick} />;
+      case 2:
+        return <EducationDetails onNextClick={handleNextClick} />;
+      case 3:
+        return <SkillDetails onNextClick={handleNextClick} />;
+      case 4:
+        return <TrainingDetails />;
+      case 5:
+        return <WorkExperienceDetails />;
+      case 6:
+        navigate("/candidate");
+        return null;
     }
   };
 
@@ -24,7 +41,15 @@ export default function CandidateDetail() {
     <div className="w-full min-h-screen border broder-black flex items-center justify-center bg-gray-100">
       <div className="bg-white rounded-lg p-4 flex flex-col gap-4 w-[70%]">
         {renderComponent()}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => {
+              handleNextClick();
+            }}
+            className="text-blue-600 border w-[10%] border-blue-600 rounded-md transition-all delay-200 ease-in-out hover:bg-blue-700 hover:text-white"
+          >
+            Skip
+          </button>
           <button
             onClick={() => {
               handleNextClick();
