@@ -3,7 +3,7 @@ require("dotenv").config();
 const secret = process.env.SECRET_KEY;
 
 const verifyToken = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies.jwt || req.headers["authorization"];
 
   if (!token) {
     return res.status(403).json({ error: "No token provided" });

@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const logout = async (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies.jwt || req.headers["authorization"];
 
   if (!token) {
     return res.status(400).json({ error: "No token found" });

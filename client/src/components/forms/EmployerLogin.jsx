@@ -36,7 +36,6 @@ export default function EmployerLogin() {
         "http://localhost:4000/user/login",
         values
       );
-      console.log(respond);
       toast.success("Logged in successfully");
       localStorage.setItem("token", respond.data.token);
       navigate("/employer/");

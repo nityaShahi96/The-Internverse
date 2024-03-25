@@ -101,12 +101,12 @@ const login = async (req, res) => {
     },
   });
 
-  res.cookie("token", token, {
+  res.cookie("jwt", token, {
     httpOnly: true,
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
-  res.json({ token });
+  res.json({ token: token });
 };
 
 module.exports = { login, register };

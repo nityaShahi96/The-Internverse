@@ -31,12 +31,13 @@ const EmployerRegister = () => {
     console.log("validationErrors", validationErrors); // Add this line
     if (Object.keys(validationErrors).length === 0) {
       axios
-        .post("http://localhost:4000/user/register", values)
+        .post("user/register", values)
         .then((response) => {
           if (response.data.error) {
             setErrors({ api: response.data.error });
           } else {
-            // Handle successful registration here, e.g. redirect to login page
+            toast.success("Registered successfully");
+            console.log(response.data);
           }
         })
         .catch((error) => {
