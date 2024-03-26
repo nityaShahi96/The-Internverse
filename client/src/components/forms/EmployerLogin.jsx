@@ -33,7 +33,7 @@ export default function EmployerLogin() {
     if (Object.keys(errors).length > 0) return;
     try {
       const respond = await axios.post(
-        "http://localhost:4000/user/login",
+        "http://localhost:4000/user/employerLogin",
         values
       );
       toast.success("Logged in successfully");

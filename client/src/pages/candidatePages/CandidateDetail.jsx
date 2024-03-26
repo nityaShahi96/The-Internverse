@@ -6,6 +6,7 @@ import TrainingDetails from "../../components/candidate/detailsFormComponent/Tra
 import WorkExperienceDetails from "../../components/candidate/detailsFormComponent/WorkExperienceDetails";
 import { PersonalDetails } from "../../components/candidate/detailsFormComponent/index";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react"; // Add this line
 
 export default function CandidateDetail() {
   const [currrentStep, setCurrentStep] = useState(0);
@@ -15,7 +16,11 @@ export default function CandidateDetail() {
     setCurrentStep(currrentStep + 1);
   };
 
-  console.log(currrentStep);
+  useEffect(() => {
+    if (currrentStep === 6) {
+      navigate("/candidate");
+    }
+  }, [currrentStep, navigate]); // Add this useEffect hook
 
   const renderComponent = () => {
     switch (currrentStep) {
@@ -32,7 +37,6 @@ export default function CandidateDetail() {
       case 5:
         return <WorkExperienceDetails />;
       case 6:
-        navigate("/candidate");
         return null;
     }
   };

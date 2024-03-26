@@ -12,7 +12,7 @@ const Home = () => {
       const respond = await axios.get("http://localhost:4000/logout");
       localStorage.removeItem("token");
       navigate("/");
-      toast.success(respond.message);
+      toast.success("Logged out successfully!");
     } catch (error) {
       console.log(error);
     }

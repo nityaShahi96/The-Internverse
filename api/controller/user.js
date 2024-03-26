@@ -58,55 +58,99 @@ const register = async (req, res) => {
 };
 
 //login
-const login = async (req, res) => {
-  const { email, password } = req.body;
+const loginStudent = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-    include: {
-      employer: true,
-      student: true,
-    },
-  });
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      include: {
+        student: true,
+      },
+    });
 
-  if (!user) {
-    return res
-      .status(400)
-      .json({ error: "User with this email does not exist" });
+    if (!user || !user.student) {
+      return res
+        .status(400)
+        .json({ error: "Student with this email does not exist" });
+    }
+
+    const valid = await bcrypt.compare(password, user.password);
+
+    if (!valid) {
+      return res.status(400).json({ error: "Invalid password" });
+    }
+
+    const token = jwt.sign({ userId: user.id, userType: "student" }, secret, {
+      expiresIn: "6h",
+    });
+
+    await prisma.token.create({
+      data: {
+        token: token,
+        userId: user.id,
+      },
+    });
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res.json({ token: token });
+    console.log(token);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  const valid = await bcrypt.compare(password, user.password);
-
-  if (!valid) {
-    return res.status(400).json({ error: "Invalid password" });
-  }
-
-  let userType;
-  if (user.employer) {
-    userType = "employer";
-  } else if (user.student) {
-    userType = "student";
-  }
-
-  const token = jwt.sign({ userId: user.id, userType: userType }, secret, {
-    expiresIn: "6h",
-  });
-
-  await prisma.token.create({
-    data: {
-      token: token,
-      userId: user.id,
-    },
-  });
-
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
-  res.json({ token: token });
 };
 
-module.exports = { login, register };
+const loginEmployer = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      include: {
+        employer: true,
+      },
+    });
+
+    if (!user || !user.employer) {
+      return res
+        .status(400)
+        .json({ error: "Employer with this email does not exist" });
+    }
+
+    const valid = await bcrypt.compare(password, user.password);
+
+    if (!valid) {
+      return res.status(400).json({ error: "Invalid password" });
+    }
+
+    const token = jwt.sign({ userId: user.id, userType: "employer" }, secret, {
+      expiresIn: "6h",
+    });
+
+    await prisma.token.create({
+      data: {
+        token: token,
+        userId: user.id,
+      },
+    });
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res.json({ token: token });
+    console.log(token);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+module.exports = { loginStudent, loginEmployer, register };

@@ -28,21 +28,28 @@ export default function StudentLogin() {
 
     if (Object.keys(errors).length > 0) {
       toast.error("Error in form!");
-      return;
+    } else {
+      toast.success("Successfully Logged In!");
+      navigate("/candidateDetails");
     }
 
-    toast.success("Successfully Logged In!");
-    navigate("/candidateDetails");
+    return errors; // Add this line
   }
 
   const login = async (e) => {
     e.preventDefault();
-    handleSubmit(e);
+    const errors = handleSubmit(e);
     if (Object.keys(errors).length > 0) return;
     try {
-      await axios.post("http://localhost:4000/user/login", values);
+      const respond = await axios.post(
+        "http://localhost:4000/user/studentLogin",
+        values
+      );
       toast.success("Logged in successfully");
+      localStorage.setItem("token", respond.data.token);
+      navigate("/candidateDetails/");
     } catch (error) {
+      toast.error(error.response.data.error);
       console.log(error);
     }
   };
