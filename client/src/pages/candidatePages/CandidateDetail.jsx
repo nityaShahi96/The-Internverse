@@ -1,12 +1,14 @@
-import AddressDetails from "../../components/candidate/detailsFormComponent/AddressDetails";
-import EducationDetails from "../../components/candidate/detailsFormComponent/EducationDetails";
 import { useState } from "react";
-import SkillDetails from "../../components/candidate/detailsFormComponent/SkillDetails";
-import TrainingDetails from "../../components/candidate/detailsFormComponent/TrainingDetails";
-import WorkExperienceDetails from "../../components/candidate/detailsFormComponent/WorkExperienceDetails";
-import { PersonalDetails } from "../../components/candidate/detailsFormComponent/index";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react"; // Add this line
+import { useEffect } from "react";
+import {
+  PersonalDetails,
+  AddressDetails,
+  EducationDetails,
+  SkillDetails,
+  TrainingDetails,
+  WorkExperienceDetails,
+} from "../../components/candidate/detailsFormComponent/index";
 
 export default function CandidateDetail() {
   const [currrentStep, setCurrentStep] = useState(0);
