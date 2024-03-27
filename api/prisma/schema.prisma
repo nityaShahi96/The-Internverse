@@ -13,8 +13,8 @@ model User {
   email     String     @unique
   password  String
   token     Token[]
-  employer  Employer?  
-  student   Student?   
+  employer  Employer[]  
+  student   Student[]   
 }
 
 model Employer {
@@ -24,12 +24,63 @@ model Employer {
   userId    Int    @unique
 }
 
+
 model Student {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
-  user      User   @relation(fields: [userId], references: [id])
-  userId    Int    @unique
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  firstName    String
+  lastName     String
+  user         User     @relation(fields: [userId], references: [id])
+  designation  String?
+  aboutYourself String?
+  address      Address?  @relation(fields: [addressId], references: [id])
+  addressId    Int?
+  education    Education? @relation(fields: [educationId], references: [id])
+  educationId  Int?
+  skills       String?
+  training     Training? @relation(fields: [trainingId], references: [id])
+  trainingId   Int?
+  experience   Experience? @relation(fields: [experienceId], references: [id])
+  experienceId Int?
+}
+
+model Address {
+  id               Int      @id @default(autoincrement())
+  address          String?
+  province         String?
+  city             String?
+  zipCode          String?
+  permanentAddress String?
+  students         Student[]
+}
+
+model Education {
+  id                  Int      @id @default(autoincrement())
+  universityName      String?
+  degree              String?
+  universityCity      String?
+  universityStartDate DateTime?
+  universityEndDate   DateTime?
+  universityStatus    String?
+  students            Student[]
+}
+
+model Training {
+  id                    Int      @id @default(autoincrement())
+  trainingCertificates  String?
+  trainingCompletionDate DateTime?
+  trainingDescription   String?
+  students              Student[]
+}
+
+model Experience {
+  id                    Int      @id @default(autoincrement())
+  experienceDesignation String?
+  experienceCompany     String?
+  experienceStartDate   DateTime?
+  experienceEndDate     DateTime?
+  experienceDescription String?
+  students              Student[]
 }
 
 model Token {
